@@ -1,0 +1,68 @@
+# =========================
+# Environment
+# =========================
+.env
+.env.*
+!.env.example
+
+# =========================
+# Go binaries / build output
+# =========================
+bin/
+dist/
+build/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Go test binaries
+*.test
+
+# Coverage / profiling
+*.out
+coverage.*
+*.prof
+
+# =========================
+# Air
+# =========================
+tmp/
+build-errors.log
+
+# =========================
+# Dependencies
+# =========================
+vendor/
+
+# =========================
+# IDE / Editors
+# =========================
+.idea/
+.vscode/
+.zed/
+
+*.swp
+*.swo
+*~
+
+# =========================
+# OS files
+# =========================
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# =========================
+# Logs
+# =========================
+*.log
+logs/
+
+# =========================
+# Temporary files
+# =========================
+.cache/
+*.tmp
+*.temp
