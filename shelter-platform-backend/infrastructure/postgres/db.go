@@ -18,7 +18,7 @@ func NewPool(ctx context.Context, url string) (*pgxpool.Pool, error) {
 		return nil, fmt.Errorf("error trying to ping DB: %w", err)
 	}
 
-	fmt.Println("successfully connected to DB!")
+	fmt.Println("Successfully connected to DB!")
 
 	return pool, nil
 }

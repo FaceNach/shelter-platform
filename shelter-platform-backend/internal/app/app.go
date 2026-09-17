@@ -30,6 +30,6 @@ func Run(ctx context.Context) error {
 
 	r := newRouter(shelterHandler)
 
-	fmt.Printf("Server listening on port %s", cfg.port)
+	fmt.Printf("Server listening on port %s\n", cfg.port)
 	return http.ListenAndServe(cfg.port, r)
 }
