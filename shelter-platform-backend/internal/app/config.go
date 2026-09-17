@@ -30,6 +30,8 @@ func LoadConfig() (*Config, error) {
 		return nil, fmt.Errorf("DATABASE_URL is empty on .env")
 	}
 
+	fmt.Println("Successfully loaded .env variables")
+
 	return &Config{
 		port:        port,
 		databaseUrl: databaseUrl,
