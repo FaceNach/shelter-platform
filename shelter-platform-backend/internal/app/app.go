@@ -2,8 +2,10 @@ package app
 
 import (
 	"context"
+	"net/http"
 	"shelter-platform/infrastructure/postgres"
-	"shelter-platform/internal/shelter/service"
+	shelterHandler "shelter-platform/internal/shelter/handler"
+	shelterService "shelter-platform/internal/shelter/service"
 )
 
 func Run(ctx context.Context) error {
@@ -19,7 +21,10 @@ func Run(ctx context.Context) error {
 	defer pool.Close()
 
 	shelterRepo := postgres.NewShelterRepository(pool)
-	_ = service.New(shelterRepo)
+	shelterService := shelterService.New(shelterRepo)
+	shelterHandler := shelterHandler.New(shelterService)
 
-	return nil
+	r := newRouter(shelterHandler)
+
+	return http.ListenAndServe(cfg.port, r)
 }
