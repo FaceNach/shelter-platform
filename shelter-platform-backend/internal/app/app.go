@@ -27,7 +27,7 @@ func Run(ctx context.Context) error {
 	shelterRepo := postgres.NewShelterRepository(pool)
 	shelterService := shelterService.New(shelterRepo)
 	shelterHandler := shelterHandler.New(shelterService)
-
+	
 	r := newRouter(shelterHandler)
 
 	fmt.Printf("Server listening on port %s\n", cfg.port)
