@@ -6,15 +6,18 @@ import (
 	"shelter-platform/internal/shelter/service"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-playground/validator/v10"
 )
 
 type Handler struct {
-	service *service.Service
+	service   *service.Service
+	validator *validator.Validate
 }
 
-func New(service *service.Service) *Handler {
+func New(service *service.Service, validator *validator.Validate) *Handler {
 	return &Handler{
-		service: service,
+		service:   service,
+		validator: validator,
 	}
 }
 

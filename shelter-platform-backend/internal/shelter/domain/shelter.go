@@ -10,6 +10,7 @@ type Shelter struct {
 	Country     string
 	ZIPCode     string
 	PhoneNumber string
+	Email       string
 	FoundedAt   *time.Time
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
