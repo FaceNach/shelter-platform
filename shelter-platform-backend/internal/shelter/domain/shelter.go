@@ -1,7 +1,6 @@
 package domain
 
 import (
-	"fmt"
 	"strings"
 	"time"
 )
@@ -41,43 +40,73 @@ func NewShelter(params NewShelterParams) (Shelter, error) {
 	email := strings.TrimSpace(params.ContactEmail)
 
 	if name == "" {
-		return Shelter{}, fmt.Errorf("name cannot be empty")
+		return Shelter{}, &ValidationError{
+			Field:   "name",
+			Message: "name cannot be empty",
+		}
 	}
 
 	if len(name) <= 3 {
-		return Shelter{}, fmt.Errorf("name needs to have more than 3 characters")
+		return Shelter{}, &ValidationError{
+			Field:   "name",
+			Message: "name needs to have more than 3 characters",
+		}
 	}
 
 	if city == "" {
-		return Shelter{}, fmt.Errorf("city cannot be empty")
+		return Shelter{}, &ValidationError{
+			Field:   "city",
+			Message: "city cannot be empty",
+		}
 	}
 
 	if state == "" {
-		return Shelter{}, fmt.Errorf("state cannot be empty")
+		return Shelter{}, &ValidationError{
+			Field:   "state",
+			Message: "state cannot be empty",
+		}
 	}
 
 	if country == "" {
-		return Shelter{}, fmt.Errorf("country cannot be empty")
+		return Shelter{}, &ValidationError{
+			Field:   "country",
+			Message: "country cannot be empty",
+		}
 	}
 
 	if zipCode == "" {
-		return Shelter{}, fmt.Errorf("zip code cannot be empty")
+		return Shelter{}, &ValidationError{
+			Field:   "zip_code",
+			Message: "zip code cannot be empty",
+		}
 	}
 
 	if phoneNumber == "" {
-		return Shelter{}, fmt.Errorf("phone number cannot be empty")
+		return Shelter{}, &ValidationError{
+			Field:   "phone_number",
+			Message: "phone number cannot be empty",
+		}
 	}
 
 	if email == "" {
-		return Shelter{}, fmt.Errorf("email cannot be empty")
+		return Shelter{}, &ValidationError{
+			Field:   "contact_email",
+			Message: "email cannot be empty",
+		}
 	}
 
 	if params.FoundedAt == nil {
-		return Shelter{}, fmt.Errorf("founded at cannot be nil")
+		return Shelter{}, &ValidationError{
+			Field:   "founded_at",
+			Message: "founded at cannot be nil",
+		}
 	}
 
 	if params.FoundedAt.After(time.Now()) {
-		return Shelter{}, fmt.Errorf("founded at cannot be in the future")
+		return Shelter{}, &ValidationError{
+			Field:   "founded_at",
+			Message: "founded at cannot be in the future",
+		}
 	}
 
 	return Shelter{

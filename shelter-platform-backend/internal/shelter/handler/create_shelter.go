@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"shelter-platform/internal/httpapi"
+	"shelter-platform/internal/shelter/domain"
 	"shelter-platform/internal/shelter/service"
 
 	"time"
@@ -49,19 +50,26 @@ func (h *Handler) createShelter(w http.ResponseWriter, r *http.Request) {
 	}
 
 	shelterInput := service.CreateShelterInput{
-		Name:        req.Name,
-		City:        req.City,
-		State:       req.State,
-		Country:     req.Country,
-		ZIPCode:     req.ZIPCode,
-		ContactEmail:       req.ContactEmail,
-		PhoneNumber: req.PhoneNumber,
-		FoundedAt:   req.FoundedAt,
+		Name:         req.Name,
+		City:         req.City,
+		State:        req.State,
+		Country:      req.Country,
+		ZIPCode:      req.ZIPCode,
+		ContactEmail: req.ContactEmail,
+		PhoneNumber:  req.PhoneNumber,
+		FoundedAt:    req.FoundedAt,
 	}
 
 	err = h.service.CreateShelter(r.Context(), shelterInput)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("error: %v", err), http.StatusBadRequest)
+		var validationErr *domain.ValidationError
+		if errors.As(err, &validationErr) {
+			http.Error(w, validationErr.Error(), http.StatusBadRequest)
+			return
+		}
+
+		log.Printf("create shelter: %v", err)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
 
