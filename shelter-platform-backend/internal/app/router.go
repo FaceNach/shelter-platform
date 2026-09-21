@@ -9,7 +9,7 @@ import (
 func newRouter(shelterHandler *shelterHandler.Handler) chi.Router {
 	r := chi.NewRouter()
 
-	r.Mount("/v1/shelter", shelterHandler.Routes())
+	r.Mount("/v1/shelters", shelterHandler.Routes())
 
 	return r
 }

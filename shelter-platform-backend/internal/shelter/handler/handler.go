@@ -25,6 +25,7 @@ func (h *Handler) Routes() http.Handler {
 	r := chi.NewRouter()
 
 	r.Get("/hello", h.helloWorld)
+	r.Post("/createShelter", h.createShelter)
 
 	return r
 }

@@ -1,7 +1,11 @@
 package handler
 
 import (
+	"errors"
+	"log"
 	"net/http"
+	"shelter-platform/internal/httpapi"
+
 	"time"
 )
 
@@ -17,5 +21,20 @@ type createShelterRequest struct {
 }
 
 func (h *Handler) createShelter(w http.ResponseWriter, r *http.Request) {
+
+	var req createShelterRequest
+
+	err := httpapi.DecodeJSONBody(w, r, &req)
+
+	if err != nil {
+		var mr *httpapi.MalformedRequest
+		if errors.As(err, &mr) {
+			http.Error(w, mr.Msg, mr.Status)
+		} else {
+			log.Print(err.Error())
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		}
+		return
+	}
 
 }
