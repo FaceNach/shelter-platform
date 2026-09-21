@@ -2,22 +2,26 @@ package handler
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"shelter-platform/internal/httpapi"
+	"shelter-platform/internal/shelter/service"
 
 	"time"
+
+	"github.com/go-playground/validator/v10"
 )
 
 type createShelterRequest struct {
-	Name        string     `json:"name" validate:"required,max=100"`
-	City        string     `json:"city" validate:"required"`
-	State       string     `json:"state" validate:"required"`
-	Country     string     `json:"country" validate:"required"`
-	ZIPCode     string     `json:"zip_code" validate:"required"`
-	Email       string     `json:"email" validate:"required,email"`
-	PhoneNumber string     `json:"phone_number" validate:"required"`
-	FoundedAt   *time.Time `json:"founded_at" validate:"required"`
+	Name         string     `json:"name" validate:"required,max=100"`
+	City         string     `json:"city" validate:"required"`
+	State        string     `json:"state" validate:"required"`
+	Country      string     `json:"country" validate:"required"`
+	ZIPCode      string     `json:"zip_code" validate:"required"`
+	ContactEmail string     `json:"contact_email" validate:"required,email"`
+	PhoneNumber  string     `json:"phone_number" validate:"required"`
+	FoundedAt    *time.Time `json:"founded_at" validate:"required"`
 }
 
 func (h *Handler) createShelter(w http.ResponseWriter, r *http.Request) {
@@ -34,6 +38,30 @@ func (h *Handler) createShelter(w http.ResponseWriter, r *http.Request) {
 			log.Print(err.Error())
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		}
+		return
+	}
+
+	err = h.validator.Struct(req)
+	if err != nil {
+		errors := err.(validator.ValidationErrors)
+		http.Error(w, fmt.Sprintf("validation error: %v", errors), http.StatusBadRequest)
+		return
+	}
+
+	shelterInput := service.CreateShelterInput{
+		Name:        req.Name,
+		City:        req.City,
+		State:       req.State,
+		Country:     req.Country,
+		ZIPCode:     req.ZIPCode,
+		ContactEmail:       req.ContactEmail,
+		PhoneNumber: req.PhoneNumber,
+		FoundedAt:   req.FoundedAt,
+	}
+
+	err = h.service.CreateShelter(r.Context(), shelterInput)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("error: %v", err), http.StatusBadRequest)
 		return
 	}
 
