@@ -18,7 +18,7 @@ type CreateShelterInput struct {
 	FoundedAt    *time.Time
 }
 
-func (s *Service) CreateShelter(ctx context.Context, input CreateShelterInput) error {
+func (s *Service) CreateShelter(ctx context.Context, input CreateShelterInput) (domain.Shelter, error) {
 
 	shelter, err := domain.NewShelter(domain.NewShelterParams{
 		Name:         input.Name,
@@ -32,13 +32,8 @@ func (s *Service) CreateShelter(ctx context.Context, input CreateShelterInput) e
 	})
 
 	if err != nil {
-		return err
+		return domain.Shelter{}, err
 	}
 
-	_, err = s.repo.Create(ctx, shelter)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return s.repo.Create(ctx, shelter)
 }

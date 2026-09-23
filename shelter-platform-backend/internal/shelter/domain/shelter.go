@@ -3,6 +3,7 @@ package domain
 import (
 	"strings"
 	"time"
+	"unicode/utf8"
 )
 
 type Shelter struct {
@@ -46,7 +47,7 @@ func NewShelter(params NewShelterParams) (Shelter, error) {
 		}
 	}
 
-	if len(name) <= 3 {
+	if utf8.RuneCountInString(name) <= 3 {
 		return Shelter{}, &ValidationError{
 			Field:   "name",
 			Message: "name needs to have more than 3 characters",

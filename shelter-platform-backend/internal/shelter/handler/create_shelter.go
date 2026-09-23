@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
@@ -15,14 +16,18 @@ import (
 )
 
 type createShelterRequest struct {
-	Name         string     `json:"name" validate:"required,max=100"`
-	City         string     `json:"city" validate:"required"`
-	State        string     `json:"state" validate:"required"`
-	Country      string     `json:"country" validate:"required"`
-	ZIPCode      string     `json:"zip_code" validate:"required"`
-	ContactEmail string     `json:"contact_email" validate:"required,email"`
-	PhoneNumber  string     `json:"phone_number" validate:"required"`
-	FoundedAt    *time.Time `json:"founded_at" validate:"required"`
+	Name         string `json:"name" validate:"required,max=100"`
+	City         string `json:"city" validate:"required"`
+	State        string `json:"state" validate:"required"`
+	Country      string `json:"country" validate:"required"`
+	ZIPCode      string `json:"zip_code" validate:"required"`
+	ContactEmail string `json:"contact_email" validate:"required,email"`
+	PhoneNumber  string `json:"phone_number" validate:"required"`
+	FoundedAt    string `json:"founded_at" validate:"required"`
+}
+
+type createShelterResponse struct {
+	ID int64 `json:"id"`
 }
 
 func (h *Handler) createShelter(w http.ResponseWriter, r *http.Request) {
@@ -49,6 +54,12 @@ func (h *Handler) createShelter(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	foundedAt, err := time.Parse(time.RFC3339, req.FoundedAt)
+	if err != nil {
+		http.Error(w, "founded_at must be a valid RFC3339 timestamp", http.StatusBadRequest)
+		return
+	}
+
 	shelterInput := service.CreateShelterInput{
 		Name:         req.Name,
 		City:         req.City,
@@ -57,10 +68,10 @@ func (h *Handler) createShelter(w http.ResponseWriter, r *http.Request) {
 		ZIPCode:      req.ZIPCode,
 		ContactEmail: req.ContactEmail,
 		PhoneNumber:  req.PhoneNumber,
-		FoundedAt:    req.FoundedAt,
+		FoundedAt:    &foundedAt,
 	}
 
-	err = h.service.CreateShelter(r.Context(), shelterInput)
+	created, err := h.service.CreateShelter(r.Context(), shelterInput)
 	if err != nil {
 		var validationErr *domain.ValidationError
 		if errors.As(err, &validationErr) {
@@ -73,4 +84,10 @@ func (h *Handler) createShelter(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	response := createShelterResponse{ID: created.ID}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		log.Printf("write create shelter response: %v", err)
+	}
 }
